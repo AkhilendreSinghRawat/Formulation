@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Calculation {
+  id        String   @id @default(cuid())
+  name      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  products Product[]
+
+  Formulation   Formulation? @relation(fields: [formulationId], references: [id])
+  formulationId String?
+}
+
+model Product {
+  id         String   @id @default(cuid())
+  type       String
+  name       String
+  rate       Decimal
+  percentage Decimal?
+  purity     Decimal?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  Calculation   Calculation? @relation(fields: [calculationId], references: [id])
+  calculationId String?
+}
+
+model Formulation {
+  id        String   @id @default(cuid())
+  name      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  calculations Calculation[]
+
+  List   List?   @relation(fields: [listId], references: [id])
+  listId String?
+}
+
+model List {
+  id        String   @id @default(cuid())
+  name      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  Formulations Formulation[]
+}
